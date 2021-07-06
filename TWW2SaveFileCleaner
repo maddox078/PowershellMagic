@@ -1,0 +1,25 @@
+#This script will clear out all but the most recent save file per campaign in the video game Total War: Warhammer 2
+#The save files in this game get quite large and clearing them out regularly can save a considerable amount of space
+
+$RootDir = $env:AppData + "\The Creative Assembly\Warhammer2\save_games\"
+$SaveFiles = Get-ChildItem -Path $RootDir | sort LastWriteTime -Descending
+$LastCampaignID = "0"
+$Pattern = "([0-9]+)"
+
+Foreach ($File in $SaveFiles)
+{
+    if($File.Name -match $Pattern)
+    {
+        $CampaignID = $matches[0].Substring($matches[0].Length - 8,8)
+
+        if ($LastCampaignID -ne $CampaignID)
+        {
+            $LastCampaignID = $CampaignID
+        }
+        else
+        {
+            Remove-Item -Path $File.FullName
+        }
+    }
+
+}
