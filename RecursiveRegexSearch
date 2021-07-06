@@ -1,0 +1,22 @@
+#A script for performing a regular expression search on all text files in all subdirectories of the parent directory
+#I regularly use this to search out certain code patterns when developing mods
+#$Pattern will be your expression pattern
+#$RootDir is the highest level folder you wish to search from
+
+$Pattern = "YourRegexPatternHere"
+$RootDir = "YourRootDirectoryPath"
+$AllFiles = Get-ChildItem -Path $RootDir -Recurse
+
+Foreach ($File in $AllFiles)
+{
+    $Content = Get-Content $File.FullName
+
+    Foreach ($Line in $Content)
+    {
+        if($Line -match $Pattern)
+        {
+            -Join($Line,'|',$File.FullName)
+            
+        }
+    }
+}
