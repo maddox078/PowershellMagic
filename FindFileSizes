@@ -1,0 +1,29 @@
+#This powershell script will search all subdirectories in the root directory and generates a CSV file that lists all file sizes in MB
+#Useful for seeing where the largest files in your system are
+
+#Open folder dialog to get user output file path
+$FileBrowser = New-Object System.Windows.Forms.FolderBrowserDialog
+$FileBrowser.Description = "Please select a destination folder for the output file:"
+
+while($true)
+{
+    if($FileBrowser.ShowDialog() -eq "OK")
+    {
+        $OutputFilePath = $FileBrowser.SelectedPath + "\FileSizePowershellScript.csv"
+        $FileBrowser.Dispose()
+
+        break
+    }
+}
+
+#Begin recursive search
+
+$AllObjects = Get-ChildItem $RootDir -Recurse -ErrorAction Stop
+$Str = ""
+
+foreach($File in $AllObjects)
+{
+    $Str += $File.PSParentPath.Replace("Microsoft.PowerShell.Core\FileSystem::","") + "`t" + $File.fullname + "`t" + ($File.length / 1MB) + "`n"
+}
+
+$Str | Out-File $OutputFilePath
